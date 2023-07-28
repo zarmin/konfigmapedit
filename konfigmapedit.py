@@ -8,7 +8,7 @@ import os
 import difflib
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description='Edit multi-file Kubernetes configmaps by downloading them into a folder, let you edit and uploads them.')
+    parser = argparse.ArgumentParser(description='Edit multi-file Kubernetes configmaps by downloading them into a folder, let you edit in a shell and uploads them.')
     parser.add_argument('-n', '--namespace', type=str, help='Namespace of the configmap', required=False, default='default')
     parser.add_argument('-r', '--recreate', type=bool, help='Recreate (delete & create) the configmap instead of patching it (default is patching)', required=False, default=False)
     parser.add_argument('configmap', type=str, help='Name of the configmap')
@@ -87,15 +87,16 @@ def main():
         # prompt user to upload changes
         upload_mode = "delete & create" if should_replace else "patch"
         print(f"Configmap '{configmap.metadata.name}' in namespace '{configmap.metadata.namespace}' will be updated with '{upload_mode}'")
-        answer = input("Upload changes? [y/n] ")
-        if answer != 'y':
+        answer = input("Upload changes? yes / no")
+        if answer != 'yes':
             print("Aborting")
             return
         
+        # delete & create or patch configmap
         if should_replace:
             v1.delete_namespaced_config_map(args.configmap, args.namespace)
 
-            # clear everything except the name
+            # clear resource_version, because it is not allowed to set it when creating a resource
             configmap.metadata.resource_version = None
             v1.create_namespaced_config_map(args.namespace, configmap)
         else:
