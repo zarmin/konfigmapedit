@@ -24,4 +24,4 @@ dev = ['pip-tools']
 homepage = "https://github.com/zarmin/konfigmapedit"
 
 [project.scripts]
-realpython = "konfigmapedit.__main__:main"
+konfigmapedit = "konfigmapedit.__main__:main"

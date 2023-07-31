@@ -1,8 +1,11 @@
 # __main__.py
 
-import app
+from konfigmapedit import app_module
+
+def main():
+    is_success = app_module.main()
+    exit(0 if is_success else 1)
 
 if __name__ == '__main__':
-    is_success = app.main()
-    exit(0 if is_success else 1)
+    main()
 
